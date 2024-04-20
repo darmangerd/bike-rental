@@ -43,5 +43,34 @@ public class World {
 		// TODO start the truck and the users as independent threads.
 		// TODO the program must stop when all users have finished their travels
 		// TODO the truck needs to stop working when all users have finished their travels.
+
+		// start the truck
+		t.start();
+
+		// start the users
+		for (User u : users) {
+			u.start();
+		}
+
+		// wait for all users to finish
+		for (User u : users) {
+			try {
+				u.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
+		// stop the truck
+		t.interrupt();
+
+//		// wait for the truck to finish
+//		try {
+//			t.join();
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
+
+		System.out.println("All users have finished their travels");
 	}
 }

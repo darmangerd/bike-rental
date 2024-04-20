@@ -1,5 +1,5 @@
 public class Truck extends Thread{
-	private static final int TIME_BETWEEN_SITES = 100 ; // in milliseconds
+	private static final int TIME_BETWEEN_SITES = 25 ; // in milliseconds
 	
 	private final int capacity ;
 	private int bikes ;
@@ -13,12 +13,57 @@ public class Truck extends Thread{
 		this.bikes = 0;
 		this.capacity = capacity;
 	}
+
+
+	// balance the number of bikes on the stand
+	private void balanceBikes(Stand s){
+		synchronized (s)
+		{
+			// get the desired and current number of bikes on the stand
+			int desiredNb = s.getCapacity() / 2;
+			int currentNb = s.getAvailableBikes();
+
+			try
+			{
+				if(currentNb > desiredNb){
+					// take the minimum between the difference between the current number of bikes and the desired number
+					// of bikes on stand; and the number of bikes the truck can take
+					// to avoid taking more bikes than the truck can carry
+					int bikeToTake = Math.min(currentNb-desiredNb, this.capacity - this.bikes);
+					// take the bikes from the stand
+					this.bikes += bikeToTake;
+					s.getBikes(bikeToTake);
+				}
+				else if(currentNb < desiredNb){
+					// take the minimum between the difference between the desired number of bikes
+					// and the current number of bikes on the stand; and the number of bikes the truck has
+					// to avoid giving more bikes than the truck has
+					int bikeToGive = Math.min(desiredNb-currentNb, this.bikes);
+					this.bikes -= bikeToGive;
+					s.returnBikes(bikeToGive);
+				}
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+
+		}
+
+	}
+
 	
 	public void run() {
 		// circle around sites
 		while (true) {
 			for (Stand s : World.getStands()) {
-				// TODO here, equilibrate the number of bikes on the stand.
+				balanceBikes(s);
+				try {
+					// wait before going to the next site
+					Thread.sleep(TIME_BETWEEN_SITES);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
