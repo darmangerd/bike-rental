@@ -61,16 +61,15 @@ public class World {
 			}
 		}
 
-		// stop the truck
-		t.interrupt();
-
-//		// wait for the truck to finish
-//		try {
-//			t.join();
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		}
-
 		System.out.println("All users have finished their travels");
+
+		// stop the truck after all users have finished their travels
+		try {
+			t.interrupt();
+			t.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
 	}
 }

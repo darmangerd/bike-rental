@@ -62,7 +62,8 @@ public class User extends Thread {
 		for (int r = 0 ; r < nbRuns ; r++) {
 			// wait for 100 to 200 ms before starting a new trip
 			try {
-				Thread.sleep(100 + (int)Math.floor(Math.random() * 100));
+				Thread.sleep(100 + (int) Math.floor(Math.random() * 100));
+
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -93,7 +94,8 @@ public class User extends Thread {
 
 			// waits according to the number of hops for simulating the travel time
 			try {
-				Thread.sleep(nbHops * TIME_FOR_ONE_HOP);
+				System.out.println("User "+id+" is travelling from stand "+start+" to stand "+stop+" in "+Math.abs(nbHops)+" hops.");
+				Thread.sleep(Math.abs(nbHops * TIME_FOR_ONE_HOP));
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
