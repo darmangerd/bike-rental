@@ -2,11 +2,11 @@ import java.util.Vector;
 
 public class World {
 	private static final int NB_STANDS = 6 ;
-	private static final int NB_USERS = 100 ;
-	private static final int STAND_CAPACITY = 20 ;
-	private static final int STAND_INITIAL_BIKES = 10 ;
-	private static final int TRUCK_CAPACITY = 20 ;
-	private static final int TRUCK_INITIAL_BIKES = 10 ;
+	private static final int NB_USERS = 40 ;
+	private static final int STAND_CAPACITY = 10 ;
+	private static final int STAND_INITIAL_BIKES = 5 ;
+	private static final int TRUCK_CAPACITY = 10 ;
+	private static final int TRUCK_INITIAL_BIKES = 5 ;
 	
 	private static Vector<Stand> stands;
 	private static Vector<User> users;

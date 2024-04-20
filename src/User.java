@@ -1,14 +1,12 @@
-
-
 public class User extends Thread {
-	
+
 	private static final int MIN_RUNS = 3 ;
 	private static final int MAX_RUNS = 8 ;
 	private static final int TIME_FOR_ONE_HOP = 20 ; // in milliseconds
-		
-	private static final int[] startStands = {0,0,0,0,0,1,1,1,2,2,2,3,3,4,4,5}; 
-	private static final int[] arrivalStands = {0,1,1,2,2,2,3,3,3,4,4,4,5,5,5,5};  
-	
+
+	private static final int[] startStands = {0,0,0,0,0,1,1,1,2,2,2,3,3,4,4,5};
+	private static final int[] arrivalStands = {0,1,1,2,2,2,3,3,3,4,4,4,5,5,5,5};
+
 	/**
 	 * Get a random starting or arrival stand. The parameter is an array (either startStands or arrivalStands).
 	 * The int returned is the index of the stand in the static Vector of stands defined in the World class.
@@ -19,7 +17,7 @@ public class User extends Thread {
 	private int getRandStand (int[] source) {
 		return source[(int)(source.length * Math.random())];
 	}
-	
+
 	/**
 	 * Selects a number of runs between MIN_RUNS and MAX_RUNS
 	 * @return the number of runs.
@@ -27,7 +25,7 @@ public class User extends Thread {
 	private int getNbRuns () {
 		return MIN_RUNS + (int)Math.floor(Math.random() * (MAX_RUNS - MIN_RUNS));
 	}
-	
+
 	/**
 	 * Returns the minimal number of hops (distance between two stands on a circle) for a travel between source and destination.
 	 * @param source The source stand.
@@ -47,18 +45,18 @@ public class User extends Thread {
 		}
 		return nbHops;
 	}
-	
+
 	private final int id ;
-	
+
 	public User(int id) {
 		this.id = id ;
 	}
-	
+
 	public void run() {
 		// decide on number of runs
 		int nbRuns = getNbRuns();
 		System.out.println("User "+id+" will make "+nbRuns+" travels.");
-		
+
 		for (int r = 0 ; r < nbRuns ; r++) {
 			// wait for 100 to 200 ms before starting a new trip
 			try {
@@ -77,18 +75,16 @@ public class User extends Thread {
 			int nbHops = getMinNbHops(start, stop);
 
 
-			// get a bike (check if there is a bike available and wait if not)
-			synchronized (startStand) {
-				while (startStand.getAvailableBikes() <= 0) {
-					try {
-						//System.out.println("User "+id+" waits for a bike at stand "+start);
-						startStand.wait();
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+			synchronized (startStand){
+
+				// get a bike (check if there is a bike available and wait if not)
+				try {
+					System.out.println("User "+id+" is at stand "+start);
+					startStand.getBike();
 				}
-				// get a bike
-				startStand.getBike();
+				catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 				startStand.notifyAll();
 			}
 
@@ -100,18 +96,14 @@ public class User extends Thread {
 				e.printStackTrace();
 			}
 
-			// return the bike (check if there is a free slot and wait if not)
-			synchronized (stopStand)
-			{
-				while(stopStand.getFreeSlots() <= 0)
-				{
-					try {
-						stopStand.wait();
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+			synchronized (stopStand) {
+				// return the bike (check if there is a free slot and wait if not)
+				try {
+					System.out.println("User "+id+" arrived at stand "+stop);
+					stopStand.returnBike();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
-				stopStand.returnBike();
 				stopStand.notifyAll();
 			}
 		}
